@@ -58,7 +58,7 @@ if not exist "node_modules" (
 echo.
 echo [INFO] 正在启动本地服务...
 echo ------------------------------------------
-call npm run dev
+call npm run dev -- --open
 
 :: 如果服务意外退出，暂停显示错误信息
 echo.
