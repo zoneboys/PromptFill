@@ -40,7 +40,14 @@ export const TemplatesSidebar = React.memo(({
   handleExportTemplate,
   handleDeleteTemplate,
   handleAddTemplate,
-  INITIAL_TEMPLATES_CONFIG
+  INITIAL_TEMPLATES_CONFIG,
+  editingTemplateNameId,
+  tempTemplateName,
+  setTempTemplateName,
+  tempTemplateAuthor,
+  setTempTemplateAuthor,
+  saveTemplateName,
+  setEditingTemplateNameId
 }) => {
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
@@ -152,53 +159,85 @@ export const TemplatesSidebar = React.memo(({
                   >
                       <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5 overflow-hidden flex-1">
-                              {activeTemplateId === t_item.id && (
+                              {activeTemplateId === t_item.id && !editingTemplateNameId && (
                                   <div className="relative flex-shrink-0">
                                       <div className="w-1.5 h-5 bg-gradient-to-b from-orange-400 to-orange-600 rounded-full shadow-md shadow-orange-400/50 animate-in fade-in zoom-in duration-300"></div>
                                       <div className="absolute inset-0 w-1.5 h-5 bg-orange-50 rounded-full animate-pulse"></div>
                                   </div>
                               )}
-                              <span className={`truncate text-sm transition-all ${activeTemplateId === t_item.id ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}>{getLocalized(t_item.name, language)}</span>
-                          </div>
-                          <div className={`flex items-center gap-1.5 ${activeTemplateId === t_item.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-300`}>
-                              {INITIAL_TEMPLATES_CONFIG.some(cfg => cfg.id === t_item.id) && (
-                                  <button 
-                                      title={t('reset_template')}
-                                      onClick={(e) => { e.stopPropagation(); handleResetTemplate(t_item.id, e); }}
-                                      className="p-1.5 hover:bg-orange-100 rounded-lg text-gray-400 hover:text-orange-500 transition-all duration-200 hover:scale-110"
-                                  >
-                                      <RotateCcw size={13} />
-                                  </button>
+                              
+                              {editingTemplateNameId === t_item.id ? (
+                                <div className="flex-1 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+                                    <input 
+                                        autoFocus
+                                        type="text" 
+                                        value={tempTemplateName}
+                                        onChange={(e) => setTempTemplateName(e.target.value)}
+                                        className="w-full px-2 py-1 text-sm font-bold border-b-2 border-orange-500 bg-transparent focus:outline-none"
+                                        placeholder={t('label_placeholder')}
+                                        onKeyDown={(e) => e.key === 'Enter' && saveTemplateName()}
+                                    />
+                                    <div className="flex items-center gap-2">
+                                        <button 
+                                            onClick={saveTemplateName}
+                                            className="px-2 py-0.5 bg-orange-500 text-white text-[10px] font-bold rounded hover:bg-orange-600 transition-colors"
+                                        >
+                                            {t('confirm')}
+                                        </button>
+                                        <button 
+                                            onClick={() => setEditingTemplateNameId(null)}
+                                            className="px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded hover:bg-gray-200 transition-colors"
+                                        >
+                                            {t('cancel')}
+                                        </button>
+                                    </div>
+                                </div>
+                              ) : (
+                                <span className={`truncate text-sm transition-all ${activeTemplateId === t_item.id ? 'font-bold text-gray-900' : 'font-medium text-gray-700'}`}>{getLocalized(t_item.name, language)}</span>
                               )}
-                              <button 
-                                  title={t('rename')}
-                                  onClick={(e) => { e.stopPropagation(); startRenamingTemplate(t_item, e); }}
-                                  className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-orange-600 transition-all duration-200 hover:scale-110"
-                              >
-                                  <Pencil size={13} />
-                              </button>
-                              <button 
-                                  title={t('duplicate')}
-                                  onClick={(e) => { e.stopPropagation(); handleDuplicateTemplate(t_item, e); }}
-                                  className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-orange-600 transition-all duration-200 hover:scale-110"
-                              >
-                                  <CopyIcon size={13} />
-                              </button>
-                              <button 
-                                  title={t('export_template')}
-                                  onClick={(e) => { e.stopPropagation(); handleExportTemplate(t_item); }}
-                                  className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-all duration-200 hover:scale-110"
-                              >
-                                  <Download size={13} />
-                              </button>
-                              <button 
-                                  title={t('delete')}
-                                  onClick={(e) => { e.stopPropagation(); handleDeleteTemplate(t_item.id, e); }}
-                                  className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-all duration-200 hover:scale-110"
-                              >
-                                  <Trash2 size={13} />
-                              </button>
                           </div>
+                          
+                          {!editingTemplateNameId && (
+                            <div className={`flex items-center gap-1.5 ${activeTemplateId === t_item.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-all duration-300`}>
+                                {INITIAL_TEMPLATES_CONFIG.some(cfg => cfg.id === t_item.id) && (
+                                    <button 
+                                        title={t('reset_template')}
+                                        onClick={(e) => { e.stopPropagation(); handleResetTemplate(t_item.id, e); }}
+                                        className="p-1.5 hover:bg-orange-100 rounded-lg text-gray-400 hover:text-orange-500 transition-all duration-200 hover:scale-110"
+                                    >
+                                        <RotateCcw size={13} />
+                                    </button>
+                                )}
+                                <button 
+                                    title={t('rename')}
+                                    onClick={(e) => { e.stopPropagation(); startRenamingTemplate(t_item, e); }}
+                                    className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-orange-600 transition-all duration-200 hover:scale-110"
+                                >
+                                    <Pencil size={13} />
+                                </button>
+                                <button 
+                                    title={t('duplicate')}
+                                    onClick={(e) => { e.stopPropagation(); handleDuplicateTemplate(t_item, e); }}
+                                    className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-orange-600 transition-all duration-200 hover:scale-110"
+                                >
+                                    <CopyIcon size={13} />
+                                </button>
+                                <button 
+                                    title={t('export_template')}
+                                    onClick={(e) => { e.stopPropagation(); handleExportTemplate(t_item); }}
+                                    className="p-1.5 hover:bg-blue-50 rounded-lg text-gray-400 hover:text-blue-600 transition-all duration-200 hover:scale-110"
+                                >
+                                    <Download size={13} />
+                                </button>
+                                <button 
+                                    title={t('delete')}
+                                    onClick={(e) => { e.stopPropagation(); handleDeleteTemplate(t_item.id, e); }}
+                                    className="p-1.5 hover:bg-red-50 rounded-lg text-gray-400 hover:text-red-500 transition-all duration-200 hover:scale-110"
+                                >
+                                    <Trash2 size={13} />
+                                </button>
+                            </div>
+                          )}
                       </div>
                   </div>
               ))}

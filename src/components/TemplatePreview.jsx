@@ -32,7 +32,14 @@ export const TemplatePreview = React.memo(({
   setEditingTemplateTags,
   // 多图相关
   setImageUpdateMode,
-  setCurrentImageEditIndex
+  setCurrentImageEditIndex,
+  // 标题编辑相关
+  editingTemplateNameId,
+  tempTemplateName,
+  setTempTemplateName,
+  saveTemplateName,
+  startRenamingTemplate,
+  setEditingTemplateNameId
 }) => {
   const [editImageIndex, setEditImageIndex] = React.useState(0);
 
@@ -211,9 +218,51 @@ export const TemplatePreview = React.memo(({
                                 </button>
                             </div>
                         )}
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 tracking-tight leading-tight">
-                            {getLocalized(activeTemplate.name, language)}
-                        </h2>
+                        {editingTemplateNameId === activeTemplate.id ? (
+                            <div className="mb-4 flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                                <input 
+                                    autoFocus
+                                    type="text" 
+                                    value={tempTemplateName}
+                                    onChange={(e) => setTempTemplateName(e.target.value)}
+                                    className="text-2xl md:text-3xl font-bold text-gray-800 bg-transparent border-b-2 border-orange-500 focus:outline-none w-full pb-1"
+                                    placeholder={t('label_placeholder')}
+                                    onKeyDown={(e) => e.key === 'Enter' && saveTemplateName()}
+                                />
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={saveTemplateName}
+                                        className="px-3 py-1.5 bg-orange-500 text-white text-xs font-bold rounded-lg hover:bg-orange-600 transition-all flex items-center gap-1.5 shadow-sm"
+                                    >
+                                        <Check size={14} />
+                                        {t('confirm')}
+                                    </button>
+                                    <button 
+                                        onClick={() => setEditingTemplateNameId(null)}
+                                        className="px-3 py-1.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-200 transition-all flex items-center gap-1.5"
+                                    >
+                                        <X size={14} />
+                                        {t('cancel')}
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 mb-3 group/title-edit">
+                                <h2 className="text-3xl md:text-4xl font-bold text-gray-800 tracking-tight leading-tight">
+                                    {getLocalized(activeTemplate.name, language)}
+                                </h2>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        startRenamingTemplate(activeTemplate, e);
+                                    }}
+                                    className="p-2 rounded-xl text-gray-300 hover:text-orange-500 hover:bg-orange-50 transition-all duration-200 opacity-0 group-hover/title-edit:opacity-100"
+                                    title={t('rename')}
+                                >
+                                    <Pencil size={18} />
+                                </button>
+                            </div>
+                        )}
                         {/* Tags / Meta */}
                         <div className="flex flex-wrap items-center gap-2 mb-2">
                             <span className="px-2.5 py-1 rounded-md bg-orange-50 text-orange-600 text-xs font-bold tracking-wide border border-orange-100/50">

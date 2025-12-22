@@ -2306,6 +2306,13 @@ const App = () => {
             handleDeleteTemplate={handleDeleteTemplate}
             handleAddTemplate={handleAddTemplate}
             INITIAL_TEMPLATES_CONFIG={INITIAL_TEMPLATES_CONFIG}
+            editingTemplateNameId={editingTemplateNameId}
+            tempTemplateName={tempTemplateName}
+            setTempTemplateName={setTempTemplateName}
+            tempTemplateAuthor={tempTemplateAuthor}
+            setTempTemplateAuthor={setTempTemplateAuthor}
+            saveTemplateName={saveTemplateName}
+            setEditingTemplateNameId={setEditingTemplateNameId}
           />
 
       {/* --- 2. Main Editor (Middle) --- */}
@@ -2499,6 +2506,13 @@ const App = () => {
                         // 多图编辑相关
                         setImageUpdateMode={setImageUpdateMode}
                         setCurrentImageEditIndex={setCurrentImageEditIndex}
+                        // 标题编辑相关
+                        editingTemplateNameId={editingTemplateNameId}
+                        tempTemplateName={tempTemplateName}
+                        setTempTemplateName={setTempTemplateName}
+                        saveTemplateName={saveTemplateName}
+                        startRenamingTemplate={startRenamingTemplate}
+                        setEditingTemplateNameId={setEditingTemplateNameId}
                     />
                 )}
               </>
